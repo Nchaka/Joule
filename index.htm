@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+	<head>
+		<meta charset='UTF-8'>
+		<meta name='viewport' content="width=device-width, initial-scale=1, user-scalable=no, maximum-scale=1, minimum-scale=1">
+		<meta name='description' content='Joule Surveys'>
+		<meta name='author' content="N'chaka Benjamin">
+		<title>Joule Survey API Integration and Display</title>
+		<link href='https://fonts.googleapis.com/css?family=Merriweather|Noto+Serif+KR' rel='stylesheet'>
+		<style>
+			*, html{
+			  -webkit-transition: all 150ms;
+			  transition: all 150ms;
+			}
+			body{
+			  background: #fce6ff url('https://joule.cma.ca/content/joule/en/boilerplates/joule-header/_jcr_content/main_par/header/logo.img.png/1521126087297.png') no-repeat;
+			  background-position: bottom right;
+			  font-family: 'Noto Serif KR', sans-serif;
+			}
+			#startSurveyCtrl{
+			  font-size: 2em;
+			  margin: 5em auto;
+			  display: block;
+			  padding: 0.2em;
+			  border-radius: 0.2em;
+			  cursor: pointer;
+			  font-family: 'Merriweather', serif;
+			  background-color: #eee;
+			}
+			#startSurveyCtrl:hover{
+			  background-color: #333;
+			  color: white;
+			}
+			#startSurveyCtrl:focus{
+			  background-color: black;
+			  border-right-color: #ccc;
+			  border-bottom-color: #ccc;
+			  border-top-color: #999;
+			  border-left-color: #999;
+			  color: #ccc;
+			}
+			.loader {
+				border: 2.5em solid white;
+				border-top: 2.5em solid #013A81;
+				border-radius: 50%;
+				width: 2.3em;
+				height: 2.3em;
+				animation: spin 400ms linear infinite;
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				margin-top: -4.8em;
+				margin-left: -4.8em;
+				display: none;
+			}
+			.logoHolder{
+			  height: 5em;
+			  border: 1px solid transparent;
+			  display: inline-block;
+			}
+			.logoHolder a{
+			  border: none;
+			}
+			.logo{
+			  height: 5em;
+			  vertical-align: middle;
+			  margin-left: 1em;
+			}
+			h1,
+			h2,
+			h3{
+			  font-family: 'Merriweather', serif;
+			  animation-name: thisAnimation;
+			  animation-duration: 400ms;
+			}
+			h2{
+			  font-size: 0.9em;
+			  margin-bottom: 1em;
+			  text-transform: uppercase;
+			}
+			h3{
+			  color: #320033;
+			}
+			.survey{
+			  border: 1px solid #999;
+			  border-top-width: 5px;
+			  border-top-color: #BD2768;
+			  padding: 15px;
+			  margin: 1em auto 10em auto;
+			  background-color: rgba(238, 238, 238, 0.8);
+			}
+			.element{
+			  border: 1px dotted #eee;
+			  padding: 0.8em;
+			  margin: 0.95em auto;
+			  background-color: white;
+			  display: none;
+			  overflow: hidden;
+			}
+			@keyframes spin {
+				0% { transform: rotate(0deg); opacity: 0; }
+				100% { transform: rotate(360deg); opacity: 1; }
+			}
+			@keyframes thisAnimation {
+			  0%   {-webkit-transform: rotateX(0deg); transform: rotateX(0deg); opacity: 1;}
+			  25%  {-webkit-transform: rotateX(90deg); transform: rotateX(90deg); opacity: 0.75; background-color: #B42363;}
+			  50%  {-webkit-transform: rotateX(180deg); transform: rotateX(180deg); opacity: 0.50; background-color: rgba(180, 35, 99, 0.75);}
+			  75%  {-webkit-transform: rotateX(270deg); transform: rotateX(270deg); opacity: 0.25; background-color: rgba(180, 35, 99, 0.50);}
+			  100% {-webkit-transform: rotateX(360deg); transform: rotateX(360deg); opacity: 1; background-color: white;}
+			}
+			.showTEl{
+			  display: block;  
+			  animation-name: thisAnimation;
+			  animation-duration: 200ms; 
+			}
+			.element:hover{
+			  box-shadow: 1px 1px 3px #ccc;
+			  border-style: solid;
+			}
+			form {
+			  border: 1px solid #ccc;
+			  box-shadow: 1px 1px 2px #ccc;
+			  padding: 5px;
+			  margin: 15px;
+			  background-color: #f2f2f2;
+			}
+			label{
+			  border: 1px solid white;
+			  border-radius: 5px;
+			  padding: 7px;
+			  margin: 7px;
+			  display: inline-block;
+			  background-color: white;
+			  cursor: pointer;
+			}
+			label:hover{
+			  background-color: #BD2768;
+			  color: white;
+			  border-color: transparent;
+			}
+			table{
+			  margin: 1em 10em 0 0;
+			  text-align: center;
+			}
+			.table{
+			  overflow: auto;
+			}
+			th,
+			td{
+			  border: 1px dotted #999;
+			  padding: 3px;
+			  white-space: nowrap;
+			}
+			td label{
+			  margin: 0;
+			  border-radius: 100%;
+			}
+			td input{
+			  display: inline-block;
+			}
+			li{
+			  padding: 5px;
+			  list-style-type: none;
+			}
+			span em{
+			  font-size: 0.8em;
+			  color: #999;
+			}
+			.questBtnHolder{
+			  text-align: center;
+			  background-color: rgba(255, 255, 255, 0.3);
+			  width: 100%;
+			  position: fixed;
+			  bottom: 0;
+			  left: 0;
+			}
+			.questionsCtrl{
+			  color: #320033;
+			  font-size: 4em;
+			  border: 1px solid transparent;
+			  background-color: rgba(255, 255, 255, 0.3);
+			  box-shadow: 1px 1px 5px #999;
+			  text-align: center;
+			  margin: 0.2em 0.15em;
+			}
+			.questionsCtrl:hover{
+			  background-color: #320033;
+			  color: white;
+			  border-color: #320033;
+			  cursor: pointer;
+			}
+			.questBtnHolder:hover .questionsCtrl{
+			  visibility: visible;
+			}
+			.disabledQuestBtn{
+			  color: #ccc;
+			}
+			.disabledQuestBtn:hover{
+			  background-color: rgba(255, 255, 255, 0.3);
+			  color: #ccc;
+			  border-color: transparent;
+			}
+			textarea{
+			  width: 100%;
+			  height: 5em;
+			}
+			.rating{
+			  font-size: 2em;
+			  text-decoration: none;
+			  font-variant: normal;
+			  font-style: normal;
+			  color: green;
+			  margin-bottom: 1em;
+			}
+			a.rating{
+			  font-size: 1em;
+			  color: blue;
+			}
+		
+		</style>
+		<script>
+			var tags = '';
+			var elements = [];
+			var currEl = '0';
+			var prevEl = '-1';
+			var nextEl = '1';
+			var surNdx = '0';
+			function getRadioGroup(group) {
+				tags = "<form>";
+				group.map(function (name) {
+					tags += "<label>" + name + "<input type='radio' name='group' value='" + name + "' /></label>";
+				});
+				tags += "</form>";
+				return tags;
+			}
+			function getMatrixCaption(col) {
+				var caption = "<th></th>";
+				col.map(function (name) {
+					caption += "<th>" + name + "</th>";
+				});
+				return caption;
+			}
+			function getMatrixRadio(col, item) {
+				var radio = "";
+				col.map(function (name) {
+					radio += "<td><label><input type='radio' name='" + item + "' /></label></td>";
+				});
+				return radio;
+			}
+			function getMatrix(col, row) {
+				var thtags = '';
+				tags = '';
+				col.map(function (name, nDex) {
+					tags += "<tr ><td>" + row[nDex] + "</td>" + getMatrixRadio(col, row[nDex]) + "</tr>";
+				});
+				var ths = getMatrixCaption(col);
+				tags = "<div class='table'><table>" + ths + tags + "</table></div>";
+				return tags;
+			}
+			function getHeaders(el) {
+				var html = '';
+				if (el.name) {
+					html += "<h2>" + el.name + "</h2>";
+				}
+				if (el.title) {
+					html += "<h3>" + el.title + "</h3>";
+				}
+				return html;
+			}
+			function getRating(el) {
+				var rating = "";
+				var stars = "<div class='rating'><strong onclick='enableRating()' data-value='1'>&#10023;</strong><strong onclick='enableRating()' data-value='2'>&#10023;</strong><strong onclick='enableRating()' data-value='3'>&#10023;</strong><strong onclick='enableRating()' data-value='4'>&#10023;</strong><strong onclick='enableRating()' data-value='5'>&#10023;</strong></div>";
+				if (el.title) {
+					return stars + el.title;
+				}
+				else {
+					return stars + "<a href='#'>Please rate this survey</a>";
+				}
+			}
+			function getText(el) {
+				var txtHTML = "";
+				if (el.title) {
+					txtHTML += "<textarea>" + el.title + "</textarea>";
+					return txtHTML;
+				}
+			}
+			function getDropDown(dropdown) {
+				tags = '';
+				tags += "<select>";
+				dropdown.map(function (name) {
+					tags += "<option value='" + name + "'>" + name + "</option>";
+				});
+				tags += "</select>";
+				return tags;
+			}
+			function getElementType(els) {
+				var html = '';
+				elements = [];
+				els.map(function (el, nDex) {
+					elements.push({
+						'name': el.name,
+						'choices': el.choices,
+						'index': nDex
+					});
+					html += (nDex === 0) ? "<div class='element showTEl'>" : "<div class='element'>";
+					switch (el.type) { // Return the proper HTML based on the element type
+						case 'radiogroup':
+							html += getHeaders(el);
+							html += getRadioGroup(el.choices);
+							break;
+						case 'matrix':
+							html += getHeaders(el);
+							html += getMatrix(el.columns, el.rows);
+							break;
+						case 'text':
+							html += getHeaders(el);
+							html += getText(el);
+							break;
+						case 'rating':
+							html += getHeaders(el);
+							html += "<a href='#' class='rating'>" + getRating(el) + "</a>";
+							break;
+						case 'dropdown':
+							html += getHeaders(el);
+							html += getDropDown(el.choices);
+							break;
+					}
+					html += "</div>";
+				});
+				return html;
+			}
+			function insertReply(content) {
+				var html = '';
+				html = "<select onchange='switchSurvey()' id='selectSurvey'><option value='http://api.survey.services.joulecma.ca:8080/surveys?surveyId=1'>Survey No. 1</option><option value='http://api.survey.services.joulecma.ca:8080/surveys?surveyId=2'>Survey No. 2</option><option value='http://api.survey.services.joulecma.ca:8080/surveys?surveyId=972'>Survey No. 3</option></select>";
+				html += "<span class='logoHolder'><a href='index.htm'><img class='logo' src='https://joule.cma.ca/content/joule/en/boilerplates/joule-header/_jcr_content/main_par/header/logo.img.png/1521126087297.png' alt='Joule Logo' /></a></span>";
+				document.getElementsByTagName('BODY')[0].style.background = 'none';
+				content.map(function (survey, sNdex) {
+					html += "<div class='survey'>";
+					html += "<span>" + survey.name + " <em>ID: " + survey.surveyId + "</em></span>";
+					html += getElementType(survey.elements);
+					html += "</div><div class='loader'></div>";
+				});
+				html += "<div class='questBtnHolder'><span id='prevQuest' class='questionsCtrl disabledQuestBtn' onclick='prevQuestion()'>&#60;</span>";
+				html += "<span id='nextQuest' class='questionsCtrl' onclick='nextQuestion()'>&#62;</span></div>";
+				document.getElementsByTagName('BODY')[0].innerHTML = html;
+				if (document.getElementById('selectSurvey') !== null) {
+					document.getElementById('selectSurvey').getElementsByTagName("option")[surNdx].selected = true;
+				}
+				nprocessing();
+			}
+			function prepareJSONP(url) {
+				processing();
+				if (!url) {
+					url = 'http://api.survey.services.joulecma.ca:8080/surveys?surveyId=1';
+				}
+				var script = document.createElement('script'); // create script element
+				var callbackStr = '&callback=insertReply';
+				script.src = url + callbackStr; // assing src with callback name
+				document.body.appendChild(script); // insert script to document and load content
+			}
+			function switchSurvey() {
+				var nDex = document.getElementById('selectSurvey').selectedIndex;
+				var url = document.getElementById('selectSurvey').getElementsByTagName("option")[nDex].value;
+				prepareJSONP(url);
+				currEl = '0';
+				prevEl = '-1';
+				nextEl = '1';
+				surNdx = nDex;
+			}
+			function setThese(el, cName, prop) {
+				if (el) {
+					el.className = cName;
+					prop;
+				}
+			}
+			function prevQuestion() {
+				if (prevEl >= 0) {
+					setThese(document.getElementsByClassName('element')[currEl], 'element', currEl--);
+					setThese(document.getElementsByClassName('element')[prevEl], 'element showTEl', prevEl--);
+					setThese(document.getElementById('nextQuest'), 'questionsCtrl', nextEl--);
+					if (currEl == 0 && prevEl == '-1' && nextEl == '1') {
+						setThese(document.getElementById('prevQuest'), 'questionsCtrl disabledQuestBtn', 1);
+					}
+				}
+				else {
+					setThese(document.getElementById('prevQuest'), 'questionsCtrl disabledQuestBtn', 1);
+				}
+			}
+			function nextQuestion() {
+				if (nextEl <= (elements.length - 1)) {
+					setThese(document.getElementsByClassName('element')[currEl], 'element', currEl++);
+					setThese(document.getElementsByClassName('element')[nextEl], 'element showTEl', nextEl++);
+					setThese(document.getElementById('prevQuest'), 'questionsCtrl', prevEl++);
+					if (currEl == (elements.length - 1)) {
+						setThese(document.getElementById('nextQuest'), 'questionsCtrl disabledQuestBtn', 1);
+					}
+				}
+				else {
+					setThese(document.getElementById('nextQuest'), 'questionsCtrl disabledQuestBtn', 1);
+				}
+			}
+			function enableRating(event) {
+				var e = e || window.event;
+				var targ = e.target || e.srcElement;
+				if (targ.nodeType == 3)
+					targ = targ.parentNode; // defeat Safari bug
+				if (document.getElementsByClassName('rating')[1]) {
+					var rating = document.getElementsByClassName('rating')[1];
+					var stars = Array.prototype.slice.call(rating.getElementsByTagName('STRONG'));
+					stars.map(function (star, sNdx) {
+						if (Number(sNdx) < Number(targ.getAttribute('data-value'))) {
+							star.innerHTML = "&#10022;";
+						}
+					});
+				}
+			}
+			function processing() {
+				document.getElementsByClassName('loader')[0].style.display = 'block';
+			}
+			function nprocessing() {
+				document.getElementsByClassName('loader')[0].style.display = 'none';
+			}
+		
+		</script>
+	</head>
+	<body>
+		<button id='startSurveyCtrl' onclick='prepareJSONP()'>Start</button>
+		<div class='loader'></div>
+	</body>
+</html>
