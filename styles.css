@@ -1,3 +1,9 @@
+/**
+	Project: Joule Survey Application API Front-End
+	Author: N'chaka Benjamin
+	Site: http://njbenjamin.com
+	Date: Oct-04-2018
+*/
 *, html{
   -webkit-transition: all 150ms;
   transition: all 150ms;
@@ -29,6 +35,9 @@ body{
   border-left-color: #999;
   color: #ccc;
 }
+.noBackground{
+	background-image: none;
+}
 .loader {
     border: 2.5em solid white;
     border-top: 2.5em solid #013A81;
@@ -41,7 +50,6 @@ body{
 	left: 50%;
 	margin-top: -4.8em;
 	margin-left: -4.8em;
-	display: none;
 }
 .logoHolder{
   height: 5em;
@@ -102,6 +110,12 @@ h3{
   display: block;  
   animation-name: thisAnimation;
   animation-duration: 200ms; 
+}
+.show{
+	display: block;
+}
+.hide{
+	display: none;
 }
 .element:hover{
   box-shadow: 1px 1px 3px #ccc;

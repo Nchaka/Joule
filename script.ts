@@ -34,7 +34,7 @@ function getMatrixRadio(col, item) {
 }
 function getMatrix(col, row) {
     var thtags = '';
-    tags = '';
+	tags = '';
     col.map(function (name, nDex) {
         tags += "<tr ><td>" + row[nDex] + "</td>" + getMatrixRadio(col, row[nDex]) + "</tr>";
     });
@@ -73,7 +73,7 @@ function getDropDown(dropdown) {
     tags = '';
     tags += "<select>";
     dropdown.map(function (name) {
-        tags += "<option value='" + name + "'>" + name + "</option>";
+		tags += "<option value='" + name + "'>" + name + "</option>";
     });
     tags += "</select>";
     return tags;
@@ -118,7 +118,7 @@ function insertReply(content) {
     var html = '';
     html = "<select onchange='switchSurvey()' id='selectSurvey'><option value='http://api.survey.services.joulecma.ca:8080/surveys?surveyId=1'>Survey No. 1</option><option value='http://api.survey.services.joulecma.ca:8080/surveys?surveyId=2'>Survey No. 2</option><option value='http://api.survey.services.joulecma.ca:8080/surveys?surveyId=972'>Survey No. 3</option></select>";
     html += "<span class='logoHolder'><a href='index.htm'><img class='logo' src='https://joule.cma.ca/content/joule/en/boilerplates/joule-header/_jcr_content/main_par/header/logo.img.png/1521126087297.png' alt='Joule Logo' /></a></span>";
-    document.getElementsByTagName('BODY')[0].className = 'noBackground';
+	document.getElementsByTagName('BODY')[0].className = 'noBackground';
     content.map(function (survey, sNdex) {
         html += "<div class='survey'>";
         html += "<span>" + survey.name + " <em>ID: " + survey.surveyId + "</em></span>";
@@ -144,12 +144,12 @@ function prepareJSONP(url) {
     document.body.appendChild(script); // insert script to document and load content
 }
 function switchSurvey() {
-    var url;
-    var selectTag, selectTnDx;
-    selectTag = document.getElementById('selectSurvey');
-    selectTnDx = selectTag.selectedIndex;
-    url = document.getElementById('selectSurvey').getElementsByTagName("option")[selectTnDx].value;
-    prepareJSONP(url);
+	let url: any;
+	var selectTag, selectTnDx;
+	selectTag = document.getElementById('selectSurvey') as HTMLSelectElement;
+	selectTnDx = selectTag.selectedIndex;
+	url = document.getElementById('selectSurvey').getElementsByTagName("option")[selectTnDx].value;
+	prepareJSONP(url);
     currEl = 0;
     prevEl = -1;
     nextEl = 1;
@@ -203,8 +203,8 @@ function enableRating(event) {
     }
 }
 function processing() {
-    setThese(document.getElementsByClassName('loader')[0], 'loader show', 0);
+	setThese(document.getElementsByClassName('loader')[0], 'loader show', 0);
 }
 function nprocessing() {
-    setThese(document.getElementsByClassName('loader')[0], 'loader hide', 0);
+	setThese(document.getElementsByClassName('loader')[0], 'loader hide', 0);
 }
